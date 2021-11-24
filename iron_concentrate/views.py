@@ -1,17 +1,13 @@
 from decimal import Decimal
 
-import django_filters
-from django.db.models import F, Count, Max, Avg, Min, Value
-from django.db import models
-from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import F, Max, Avg, Min
+from django.http import JsonResponse
 from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from iron_concentrate.base.services import get_obj_list
 from iron_concentrate.models import IronConcentrate
-from iron_concentrate.serializers import IronConcentrateCreateSerializer, IronConcentrateListSerializer, \
-    MiddleIronConcentrateSerializer
+from iron_concentrate.serializers import IronConcentrateSerializer, MiddleIronConcentrateSerializer
 
 
 class SerializerByMethodMixin:
@@ -21,24 +17,11 @@ class SerializerByMethodMixin:
         return self.serializer_map.get(self.request.method, self.serializer_class)
 
 
-# class MonthFilter(django_filters.FilterSet):
-#     """class for filter"""
-#     class Meta:
-#         model = IronConcentrate
-#         fields = {
-#             'month': ['iexact', 'lte', 'gte'],
-#         }
-
-
 class IronConcentrateAPIView(SerializerByMethodMixin, generics.ListCreateAPIView):
-    queryset = IronConcentrate.objects.annotate(avg_iron=F('iron') * Decimal('1.0') / IronConcentrate.objects.count(),
-                                                max=Max('iron'))
-    # filter_backends = [DjangoFilterBackend]
-    # filterset_class = StatisticsFilter
-
+    queryset = IronConcentrate.objects.all()
     serializer_map = {
-        'GET': IronConcentrateListSerializer,
-        'POST': IronConcentrateCreateSerializer,
+        'GET': IronConcentrateSerializer,
+        'POST': IronConcentrateSerializer,
     }
 
     def create(self, request, *args, **kwargs):
@@ -65,41 +48,25 @@ class IronConcentrateAPIView(SerializerByMethodMixin, generics.ListCreateAPIView
 
 
 class MiddleIronConcentrateAPIView(generics.GenericAPIView):
-    # filter_backends = [DjangoFilterBackend]
-    # filterset_class = MonthFilter
-    # filter_fields = ['gender', 'first_name', 'last_name']
-
-    serializer_class = MiddleIronConcentrateSerializer
-    # def get(self, request):
-    #     queryset = IronConcentrate.objects.annotate(
-    #         middle=Value(IronConcentrate.objects.aggregate(Avg('iron'))['iron__avg'],
-    #                      output_field=models.FloatField()),
-    #         max=Value(IronConcentrate.objects.aggregate(Max('iron'))['iron__max'],
-    #                      output_field=models.FloatField()),
-    #         min=Value(IronConcentrate.objects.aggregate(Min('iron'))['iron__min'],
-    #                        output_field=models.FloatField())
-    #     )
-    #     serializer = MiddleIronConcentrateSerializer(queryset, many=True)
-    #     return Response(serializer.data)
+    serializer_class = IronConcentrateSerializer
 
     def post(self, request, *args, **kwargs):
-        queryset = IronConcentrate.objects.filter(month=request.data['month']).annotate(
-            middle=Value(IronConcentrate.objects.filter(month=request.data['month']).aggregate(Avg('iron'))['iron__avg'],
-                         output_field=models.FloatField()),
-            max=Value(IronConcentrate.objects.filter(month=request.data['month']).aggregate(Max('iron'))['iron__max'],
-                      output_field=models.FloatField()),
-            min=Value(IronConcentrate.objects.filter(month=request.data['month']).aggregate(Min('iron'))['iron__min'],
-                      output_field=models.FloatField())
-        )
+        queryset = IronConcentrate.objects.filter(month=request.data['month'])
+
         if not queryset:
             return Response([])
 
         queryset = self.filter_queryset(queryset)
 
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+        middle = queryset.aggregate(Avg('iron'))['iron__avg']
+        max = queryset.aggregate(Max('iron'))['iron__max']
+        min = queryset.aggregate(Min('iron'))['iron__min']
 
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data[0])
+        data = {
+            "month": request.data['month'],
+            "middle": str(middle),
+            "max": str(max),
+            "min": str(min)
+        }
+
+        return JsonResponse(data, status=status.HTTP_200_OK)
