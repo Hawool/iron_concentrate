@@ -8,12 +8,3 @@ class IronConcentrateSerializer(serializers.ModelSerializer):
         model = IronConcentrate
         fields = ['name', 'iron', 'silicon', 'aluminum', 'calcium', 'sulfur', 'month']
 
-
-class MiddleIronConcentrateSerializer(serializers.ModelSerializer):
-    # middle = serializers.FloatField()
-    # min = serializers.FloatField()
-    # max = serializers.FloatField()
-
-    class Meta:
-        model = IronConcentrate
-        fields = ['month']

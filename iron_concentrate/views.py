@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from iron_concentrate.base.services import get_obj_list
 from iron_concentrate.models import IronConcentrate
-from iron_concentrate.serializers import IronConcentrateSerializer, MiddleIronConcentrateSerializer
+from iron_concentrate.serializers import IronConcentrateSerializer
 
 
 class SerializerByMethodMixin:

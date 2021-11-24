@@ -1,35 +1,49 @@
 from unittest import TestCase
 
 from iron_concentrate.models import IronConcentrate
-from iron_concentrate.serializers import IronConcentrateSerializer, MiddleIronConcentrateSerializer
+from iron_concentrate.serializers import IronConcentrateSerializer
 
 
 class StatisticModelSerializerTestCase(TestCase):
+    """test for IronConcentrateSerializer"""
+
     def test_StatisticModelSerializer(self):
-        stat_1 = IronConcentrate.objects.create(date='2021-11-12', views=32, clicks=100, cost=120)
-        stat_2 = IronConcentrate.objects.create(date='2021-11-25', views=2, clicks=10, cost=1120)
-        data = IronConcentrateSerializer([stat_1, stat_2], many=True).data
-        print(data)
+        iron1 = IronConcentrate.objects.create(name='iron1',
+                                               iron=34.65,
+                                               silicon=34.65,
+                                               aluminum=34.65,
+                                               calcium=34.65,
+                                               sulfur=34.65,
+                                               month=5
+                                               )
+        iron2 = IronConcentrate.objects.create(name='iron2',
+                                               iron=36.65,
+                                               silicon=90.65,
+                                               aluminum=100,
+                                               calcium=10,
+                                               sulfur=30.65,
+                                               month=5
+                                               )
+
+        data = IronConcentrateSerializer([iron1, iron2], many=True).data
         expected_data = [
             {
-                # "id": stat_1.id,
-                # "cpc": format(stat_1.cost/stat_1.clicks, '.2f'),
-                # "cpm": format(stat_1.cost/stat_1.views, '.2f'),
-                "date": "2021-11-12",
-                "views": 32,
-                "clicks": 100,
-                "cost": "120.00"
+                "name": "iron1",
+                "iron": "34.65000",
+                "silicon": "34.65000",
+                "aluminum": "34.65000",
+                "calcium": "34.65000",
+                "sulfur": "34.65000",
+                "month": 5
             },
             {
-                # "id": stat_2.id,
-                # "cpc": format(stat_2.cost / stat_2.clicks, '.2f'),
-                # "cpm": format(stat_2.cost / stat_2.views, '.2f'),
-                "date": "2021-11-25",
-                "views": 2,
-                "clicks": 10,
-                "cost": "1120.00"
+                "name": "iron2",
+                "iron": "36.65000",
+                "silicon": "90.65000",
+                "aluminum": "100.00000",
+                "calcium": "10.00000",
+                "sulfur": "30.65000",
+                "month": 5
             },
         ]
-        print(expected_data)
-        print(data)
         self.assertEqual(expected_data, data)
