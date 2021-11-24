@@ -8,7 +8,7 @@ class IronConcentrate(models.Model):
     name = models.CharField(max_length=60)
     iron = models.DecimalField(max_digits=10, decimal_places=5)
     silicon = models.DecimalField(max_digits=10, decimal_places=5)
-    aluminium = models.DecimalField(max_digits=10, decimal_places=5)
+    aluminum = models.DecimalField(max_digits=10, decimal_places=5)
     calcium = models.DecimalField(max_digits=10, decimal_places=5)
     sulfur = models.DecimalField(max_digits=10, decimal_places=5)
     months = [

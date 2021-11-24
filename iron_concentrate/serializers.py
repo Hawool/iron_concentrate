@@ -3,10 +3,18 @@ from rest_framework import serializers
 from iron_concentrate.models import IronConcentrate
 
 
-class IronConcentrateSerializer(serializers.ModelSerializer):
+class IronConcentrateListSerializer(serializers.ModelSerializer):
     avg_iron = serializers.DecimalField(max_digits=10, decimal_places=5)
     max = serializers.DecimalField(max_digits=10, decimal_places=5)
 
     class Meta:
         model = IronConcentrate
         fields = '__all__'
+
+
+class IronConcentrateCreateSerializer(serializers.ModelSerializer):
+    # file_excel = serializers.FileField()
+
+    class Meta:
+        model = IronConcentrate
+        fields = ['name', 'iron', 'silicon', 'aluminum', 'calcium', 'sulfur', 'month']
