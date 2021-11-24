@@ -18,3 +18,13 @@ class IronConcentrateCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = IronConcentrate
         fields = ['name', 'iron', 'silicon', 'aluminum', 'calcium', 'sulfur', 'month']
+
+
+class MiddleIronConcentrateSerializer(serializers.ModelSerializer):
+    middle = serializers.DecimalField(max_digits=10, decimal_places=3)
+    min = serializers.DecimalField(max_digits=10, decimal_places=3)
+    max = serializers.DecimalField(max_digits=10, decimal_places=3)
+
+    class Meta:
+        model = IronConcentrate
+        fields = ['month', 'middle', 'min', 'max']
