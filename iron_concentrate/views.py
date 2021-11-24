@@ -65,7 +65,7 @@ class MiddleIronConcentrateAPIView(generics.GenericAPIView):
 
         data = {
             "month": request.data['month'],
-            "middle": str(middle),
+            "middle": str(middle.quantize(Decimal('.00001'))),
             "max": str(max),
             "min": str(min)
         }

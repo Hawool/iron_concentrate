@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'djoser',
     'django_filters',
     'django_extensions',
+    'drf_yasg',
 
     'iron_concentrate',
 ]
