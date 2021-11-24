@@ -5,7 +5,7 @@ def get_obj_list(file):
     """parsing excel, return list with dicts"""
     excel = pd.read_excel(file)
     excel.head()
-    l = []
+    irons_list = []
     for i in range(len(excel)):
         d = {
             'name': excel.name[i],
@@ -16,5 +16,5 @@ def get_obj_list(file):
             'sulfur': excel.sulfur[i],
             'month': excel.month[i],
         }
-        l.append(d)
-    return l
+        irons_list.append(d)
+    return irons_list

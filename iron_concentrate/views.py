@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.db.models import F, Max, Avg, Min
 from django.http import JsonResponse
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 
 from iron_concentrate.base.services import get_obj_list
@@ -23,9 +23,9 @@ class IronConcentrateAPIView(SerializerByMethodMixin, generics.ListCreateAPIView
         'GET': IronConcentrateSerializer,
         'POST': IronConcentrateSerializer,
     }
+    permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
-        print(request)
         if isinstance(request, list):
             serializer = self.get_serializer(data=request, many=True)
             serializer.is_valid(raise_exception=True)
@@ -49,6 +49,7 @@ class IronConcentrateAPIView(SerializerByMethodMixin, generics.ListCreateAPIView
 
 class MiddleIronConcentrateAPIView(generics.GenericAPIView):
     serializer_class = IronConcentrateSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         queryset = IronConcentrate.objects.filter(month=request.data['month'])
